@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Streaming Regional</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <h1>Streaming Regional</h1>
+    <input type="text" id="search" placeholder="Buscar por título, gênero ou região...">
+    <select id="region-filter">
+
+      <option value="Todas">Todas</option>
+      <option value="Nordeste">Nordeste</option>
+      <option value="Sul">Sul</option>
+      <option value="Sudeste">Sudeste</option>
+      <option value="Centro-Oeste">Centro-Oeste</option>
+    </select>
+
+    <button id="login-btn">Entrar / Cadastrar</button>
+    <button id="logout-btn" >Logout</button>
+    <span id="user-info"></span>
+  </header>
+
+  <main>
+    <section id="movies">
+      <h2>Destaques</h2>
+      <div id="movie-list" class="grid"></div>
+    </section>
+
+    <section id="details" class="hidden">
+      <h2 id="movie-title"></h2>
+      <p id="movie-synopsis"></p>
+      <p id="movie-cast"></p>
+      <button id="watch-btn">Assistir</button>
+      <button id="fav-btn">Favoritar</button>
+      <div id="comments"></div>
+      <textarea id="comment-input" placeholder="Escreva um comentário..."></textarea>
+      <button id="send-comment">Enviar</button>
+    </section>
+
+    <section id="player" class="hidden">
+      <h2>Assistindo: <span id="player-title"></span></h2>
+      <div class="video-player"> Player Simulado</div>
+      <label>Legenda:
+        <select>
+          <option>PT-BR</option>
+          <option>Sem legenda</option>
+        </select>
+      </label>
+      <label>Qualidade:
+        <select>
+          <option>HD</option>
+          <option>SD</option>
+        </select>
+      </label>
+      <button id="close-player">Fechar</button>
+    </section>
+  </main>
+
+
+  <div id="login-modal" class="modal hidden">
+    <div class="modal-content">
+      <h2>Entrar / Cadastrar</h2>
+      <input id="login-name" type="text" placeholder="Nome">
+      <input id="login-email" type="email" placeholder="E-mail">
+      
+    <div class="login-bott"> 
+      <button id="save-login">Salvar</button>
+      <button id="close-login">Cancelar</button>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
