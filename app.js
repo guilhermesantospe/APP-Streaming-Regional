@@ -1,8 +1,34 @@
 const movies = [
-  { id: 1, title: "Luar do Sertão", genre: "Drama", region: "Nordeste", synopsis: "Um retrato sensível de comunidades rurais.", cast: "Ana Souza, João Pedro" },
-  { id: 2, title: "Nevoeiro na Serra", genre: "Mistério", region: "Sul", synopsis: "Segredos antigos vêm à tona.", cast: "Ricardo Maia, Beatriz Faria" },
-  { id: 3, title: "Cidade das Águas", genre: "Documentário", region: "Sudeste", synopsis: "As transformações urbanas e o uso da água.", cast: "Equipe Pesquisa A" },
-  { id: 4, title: "Terra de Cima", genre: "Aventura", region: "Centro-Oeste", synopsis: "Jovens exploradores no cerrado brasileiro.", cast: "Lucas Costa, Marina Lopes" },
+  { id: 1, 
+    title: "Gonzaga: De Pai pra Filho ", 
+    genre: "Drama,Musica",
+    region: "Nordeste", 
+    synopsis: "Decidido a mudar seu destino, Gonzaga sai de casa jovem e segue para cidade grande em busca de novos horizontes e para apagar uma tristeza amorosa.", 
+    cast: " Júlio Andrade, Nanda Costa, Nivaldo Expedito De Carvalho" 
+  },
+
+  { id: 2,
+    title: "Nevoeiro na Serra", 
+    genre: "Mistério", 
+    region: "Sul", 
+    synopsis: "Segredos antigos vêm à tona.", 
+    cast: "Ricardo Maia, Beatriz Faria" 
+    },
+
+  { id: 3, 
+    title: "Cidade de Deus", 
+    genre: "crime,drama,suspense", 
+    region: "Sudeste", 
+    synopsis: "Dadinho (Douglas Silva) e Buscapé são grandes amigos, que cresceram juntos imersos em um universo de muita violência. ", 
+    cast: " Alexandre Rodrigues, Leandro Firmino da Hora, Seu Jorge" 
+  },
+
+  { id: 4, title: "Terra de Cima",
+    genre: "Aventura", 
+    region: "Centro-Oeste", 
+    synopsis: "Jovens exploradores no cerrado brasileiro.",
+    cast: "Lucas Costa, Marina Lopes" 
+  },
 ];
 
 const movieList = document.getElementById("movie-list");
@@ -61,6 +87,13 @@ function openLogin() {
 document.getElementById("close-login").onclick = () =>{
     console.log("Fechando modal de login");
     loginModal.style.displlay = 'none';
+}
+document.getElementById("exit-login").onclick = () =>{
+  currentUser = null;
+  localStorage.removeItem("user");
+  loginModal.style.display = 'none';
+  updateUserInfo();
+  alert("Você saiu da sua conta!");
 }
 
 document.getElementById("save-login").onclick = () => {
