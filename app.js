@@ -157,6 +157,5 @@ function renderComments(id) {
 search.oninput = renderMovies;
 regionFilter.onchange = renderMovies;
 document.getElementById("login-btn").onclick = openLogin;
-
 renderMovies();
 updateUserInfo();
