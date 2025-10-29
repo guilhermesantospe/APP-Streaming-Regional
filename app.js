@@ -4,7 +4,8 @@ const movies = [
     genre: "Drama,Musica",
     region: "Nordeste", 
     synopsis: "Decidido a mudar seu destino, Gonzaga sai de casa jovem e segue para cidade grande em busca de novos horizontes e para apagar uma tristeza amorosa.", 
-    cast: " Júlio Andrade, Nanda Costa, Nivaldo Expedito De Carvalho" 
+    cast: " Júlio Andrade, Nanda Costa, Nivaldo Expedito De Carvalho", 
+    image: "imagens/gonzaga.png"
   },
 
   { id: 2,
@@ -12,22 +13,25 @@ const movies = [
     genre: "Mistério", 
     region: "Sul", 
     synopsis: "Segredos antigos vêm à tona.", 
-    cast: "Ricardo Maia, Beatriz Faria" 
+    cast: "Ricardo Maia, Beatriz Faria", 
+    image: "imagens/filme nevoeiro.jpeg"
     },
 
   { id: 3, 
-    title: "Cidade de Deus", 
-    genre: "crime,drama,suspense", 
+    title: "Tropa de Elite", 
+    genre: " Ação, Drama, Suspense", 
     region: "Sudeste", 
-    synopsis: "Dadinho (Douglas Silva) e Buscapé são grandes amigos, que cresceram juntos imersos em um universo de muita violência. ", 
-    cast: " Alexandre Rodrigues, Leandro Firmino da Hora, Seu Jorge" 
+    synopsis: "Em Tropa de Elite, o dia-a-dia do grupo de policiais e de um capitão do BOPE (Wagner Moura), que quer deixar a corporação e tenta encontrar um substituto para seu posto. ", 
+    cast: "  Wagner Moura, Caio Junqueira, André Ramiro", 
+    image: "imagens/tropa de elite.png"
   },
 
-  { id: 4, title: "Terra de Cima",
-    genre: "Aventura", 
+  { id: 4, title: "Oeste Outra Vez",
+    genre: "Drama", 
     region: "Centro-Oeste", 
-    synopsis: "Jovens exploradores no cerrado brasileiro.",
-    cast: "Lucas Costa, Marina Lopes" 
+    synopsis: "Ambientado no sertão de Goiás, Oeste Outra Vez acompanha a história de Totó (Ângelo Antônio) e Durval (Babu Santana), cuja trajetória se entrelaça de forma trágica: ambos, abandonados pela mesma mulher, despertam uma rivalidade intensa e destrutiva.  ",
+    cast: "Ângelo Antônio, Antonio Pitanga, Babu Santana", 
+    image: "imagens/oeste outra vez.jpg"
   },
 ];
 
@@ -53,6 +57,7 @@ function renderMovies() {
     const div = document.createElement("div");
     div.className = "movie-card";
     div.innerHTML = `
+    <img src= "${m.image}" alt="${m.title}" class="movie-image">
       <h3>${m.title}</h3>
       <p>${m.genre} • ${m.region}</p>
       <button onclick="showDetails(${m.id})">Detalhes</button>
@@ -86,7 +91,7 @@ function openLogin() {
 }
 document.getElementById("close-login").onclick = () =>{
     console.log("Fechando modal de login");
-    loginModal.style.displlay = 'none';
+    loginModal.style.display = 'none';
 }
 document.getElementById("exit-login").onclick = () =>{
   currentUser = null;
