@@ -1,66 +1,60 @@
-const movies = [
-  { id: 1, 
-    title: "Gonzaga: De Pai pra Filho ", 
-    genre: "Drama,Musica",
-    region: "Nordeste", 
-    synopsis: "Decidido a mudar seu destino, Gonzaga sai de casa jovem e segue para cidade grande em busca de novos horizontes e para apagar uma tristeza amorosa.", 
-    cast: " Júlio Andrade, Nanda Costa, Nivaldo Expedito De Carvalho", 
-    image: "imagens/gonzaga.png"
-  },
+const API_URL = "https://streaming-regional-api.free.beeceptor.com/filmes"; 
 
-  { id: 2,
-    title: "Nevoeiro na Serra", 
-    genre: "Mistério", 
-    region: "Sul", 
-    synopsis: "Segredos antigos vêm à tona.", 
-    cast: "Ricardo Maia, Beatriz Faria", 
-    image: "imagens/filme nevoeiro.jpeg"
-    },
-
-  { id: 3, 
-    title: "Tropa de Elite", 
-    genre: " Ação, Drama, Suspense", 
-    region: "Sudeste", 
-    synopsis: "Em Tropa de Elite, o dia-a-dia do grupo de policiais e de um capitão do BOPE (Wagner Moura), que quer deixar a corporação e tenta encontrar um substituto para seu posto. ", 
-    cast: "  Wagner Moura, Caio Junqueira, André Ramiro", 
-    image: "imagens/tropa de elite.png"
-  },
-
-  { id: 4, title: "Oeste Outra Vez",
-    genre: "Drama", 
-    region: "Centro-Oeste", 
-    synopsis: "Ambientado no sertão de Goiás, Oeste Outra Vez acompanha a história de Totó (Ângelo Antônio) e Durval (Babu Santana), cuja trajetória se entrelaça de forma trágica: ambos, abandonados pela mesma mulher, despertam uma rivalidade intensa e destrutiva.  ",
-    cast: "Ângelo Antônio, Antonio Pitanga, Babu Santana", 
-    image: "imagens/oeste outra vez.jpg"
-  },
-];
+let movies = [];
 
 const movieList = document.getElementById("movie-list");
 const search = document.getElementById("search");
 const regionFilter = document.getElementById("region-filter");
-const details = document.getElementById("details");
-const player = document.getElementById("player");
-const loginModal = document.getElementById("login-modal");
+const detailsSection = document.getElementById("details");
+const moviesSection = document.getElementById("movies");
+const playerSection = document.getElementById("player");
 
 let currentUser = JSON.parse(localStorage.getItem("user")) || null;
 let favorites = JSON.parse(localStorage.getItem("favorites")) || [];
 let comments = JSON.parse(localStorage.getItem("comments")) || {};
 
+async function fetchMovies() {
+    try {
+        const response = await fetch(API_URL);
+        
+        if (!response.ok) throw new Error("Erro ao conectar na API");
+        
+        movies = await response.json();
+        
+        renderMovies();
+    } catch (error) {
+        console.error(error);
+        movieList.innerHTML = `<p class="text-danger text-center">Erro ao carregar filmes.<br>Erro: ${error.message}</p>`;
+    }
+}
+
 function renderMovies() {
   movieList.innerHTML = "";
   const query = search.value.toLowerCase();
   const region = regionFilter.value;
-  movies.filter(m => 
+
+  const filtered = movies.filter(m => 
     (m.title.toLowerCase().includes(query) || m.genre.toLowerCase().includes(query) || m.region.toLowerCase().includes(query)) &&
     (region === "Todas" || m.region === region)
-  ).forEach(m => {
+  );
+
+  if(filtered.length === 0) {
+      movieList.innerHTML = "<p class='text-center text-muted'>Nenhum filme encontrado.</p>";
+      return;
+  }
+
+  filtered.forEach(m => {
     const div = document.createElement("div");
-    div.className = "movie-card";
+    div.className = "col-md-3 col-sm-6"; 
     div.innerHTML = `
-    <img src= "${m.image}" alt="${m.title}" class="movie-image">
-      <h3>${m.title}</h3>
-      <p>${m.genre} • ${m.region}</p>
-      <button onclick="showDetails(${m.id})">Detalhes</button>
+      <div class="card h-100 movie-card">
+        <img src="${m.image}" class="card-img-top" alt="${m.title}">
+        <div class="card-body d-flex flex-column">
+          <h5 class="card-title">${m.title}</h5>
+          <p class="card-text text-muted small">${m.genre} • ${m.region}</p>
+          <button class="btn btn-outline-warning mt-auto w-100" onclick="showDetails(${m.id})">Detalhes</button>
+        </div>
+      </div>
     `;
     movieList.appendChild(div);
   });
@@ -68,99 +62,121 @@ function renderMovies() {
 
 function showDetails(id) {
   const movie = movies.find(m => m.id === id);
+  
   document.getElementById("movie-title").textContent = movie.title;
   document.getElementById("movie-synopsis").textContent = movie.synopsis;
   document.getElementById("movie-cast").textContent = "Elenco: " + movie.cast;
-  details.classList.remove("hidden");
+  
+  moviesSection.classList.add("hidden");
+  detailsSection.classList.remove("hidden");
+  playerSection.classList.add("hidden");
 
   document.getElementById("watch-btn").onclick = () => openPlayer(movie);
   document.getElementById("fav-btn").onclick = () => toggleFavorite(movie.id);
+  
   renderComments(movie.id);
 }
 
+function goBack() {
+    detailsSection.classList.add("hidden");
+    playerSection.classList.add("hidden");
+    moviesSection.classList.remove("hidden");
+}
+
 function openPlayer(movie) {
-  if (!currentUser) return openLogin();
-  player.classList.remove("hidden");
+  if (!currentUser) return alert("Faça login para assistir!");
+  
+  detailsSection.classList.add("hidden");
+  playerSection.classList.remove("hidden");
   document.getElementById("player-title").textContent = movie.title;
 }
 
-document.getElementById("close-player").onclick = () => player.classList.add("hidden");
+document.getElementById("close-player").onclick = () => {
+    playerSection.classList.add("hidden");
+    detailsSection.classList.remove("hidden");
+};
 
-function openLogin() {
-     loginModal.style.display = "flex";
-}
-document.getElementById("close-login").onclick = () =>{
-    console.log("Fechando modal de login");
-    loginModal.style.display = 'none';
-}
-document.getElementById("exit-login").onclick = () =>{
-  currentUser = null;
-  localStorage.removeItem("user");
-  loginModal.style.display = 'none';
-  updateUserInfo();
-  alert("Você saiu da sua conta!");
-}
+const bootstrapModal = new bootstrap.Modal(document.getElementById('loginModal'));
 
 document.getElementById("save-login").onclick = () => {
   const name = document.getElementById("login-name").value;
   const email = document.getElementById("login-email").value;
+  
+  if(!name || !email) return alert("Preencha os campos!");
+
   currentUser = { name, email };
   localStorage.setItem("user", JSON.stringify(currentUser));
-  loginModal.style.display ="none";
+  
+  const modalElem = document.querySelector('#loginModal');
+  const modalInstance = bootstrap.Modal.getInstance(modalElem);
+  modalInstance.hide();
+
   updateUserInfo();
 };
 
-function updateUserInfo() {
-  const userInfo = document.getElementById("user-info");
-  const loginBtn = document.getElementById("login-btn");
-  const logoutBtn = document.getElementById("logout-btn");
-
-  if (currentUser) {
-    userInfo.textContent = "Olá, " + currentUser.name;
-    loginBtn.style.display = "none";
-    logoutBtn.style.display = "inline";
-  } else {
-    userInfo.textContent = "";
-    loginBtn.style.display = "inline";
-    logoutBtn.style.display = "none";
-  }
-}
 document.getElementById("logout-btn").onclick = () => {
   currentUser = null;
   localStorage.removeItem("user");
   updateUserInfo();
 };
 
+function updateUserInfo() {
+  const userInfo = document.getElementById("user-info");
+  const loginBtn = document.getElementById("login-btn");
+  const userArea = document.getElementById("user-area");
+
+  if (currentUser) {
+    userInfo.textContent = "Olá, " + currentUser.name;
+    loginBtn.classList.add("d-none"); 
+    userArea.classList.remove("d-none");
+    userArea.classList.add("d-flex");
+  } else {
+    userInfo.textContent = "";
+    loginBtn.classList.remove("d-none");
+    userArea.classList.add("d-none");
+    userArea.classList.remove("d-flex");
+  }
+}
+
 function toggleFavorite(id) {
-  if (!currentUser) return openLogin();
-  if (favorites.includes(id)) favorites = favorites.filter(f => f !== id);
-  else favorites.push(id);
+  if (!currentUser) return alert("Faça login para favoritar!");
+  
+  if (favorites.includes(id)) {
+      favorites = favorites.filter(f => f !== id);
+      alert("Removido dos favoritos.");
+  } else {
+      favorites.push(id);
+      alert("Adicionado aos favoritos!");
+  }
   localStorage.setItem("favorites", JSON.stringify(favorites));
-  alert("Favoritos atualizados!");
 }
 
 function renderComments(id) {
   const cBox = document.getElementById("comments");
   cBox.innerHTML = "";
   (comments[id] || []).forEach(c => {
-    const p = document.createElement("p");
-    p.textContent = `${c.user}: ${c.text}`;
+    const p = document.createElement("div");
+    p.className = "border-bottom border-secondary py-1";
+    p.innerHTML = `<strong class="text-warning">${c.user}:</strong> <span>${c.text}</span>`;
     cBox.appendChild(p);
   });
 
   document.getElementById("send-comment").onclick = () => {
-    if (!currentUser) return openLogin();
+    if (!currentUser) return alert("Faça login para comentar!");
     const text = document.getElementById("comment-input").value.trim();
     if (!text) return;
+    
     comments[id] = comments[id] || [];
     comments[id].push({ user: currentUser.name, text });
     localStorage.setItem("comments", JSON.stringify(comments));
+    
+    document.getElementById("comment-input").value = ""; 
     renderComments(id);
   };
 }
 
 search.oninput = renderMovies;
 regionFilter.onchange = renderMovies;
-document.getElementById("login-btn").onclick = openLogin;
-renderMovies();
+
 updateUserInfo();
+fetchMovies();
